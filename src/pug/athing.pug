@@ -1,0 +1,36 @@
+doctype html
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+        meta(name='description', content='Clever Nimbus Landing Page')
+        meta(name='author', content='CleverNimbus')
+
+        title CleverNimbus main site
+
+        // Favicon
+        link(rel='icon', type='image/x-icon', href='assets/favicon.ico')
+
+        include includes/css.pug
+    body
+        include includes/navbar.pug
+
+        #wrapper.d-flex
+            include includes/sidebar.pug
+
+            // Page content wrapper
+            #page-content-wrapper
+                form(role='form')
+                div.form-group
+                    input#name.form-control(type='password', placeholder='master' name='inputMaster')
+                div.form-group
+                    input#name.form-control(type='text', placeholder='name' name='inputName')
+                div.form-group
+                    input#email.form-control(type='password', placeholder='' name='result')
+                button.btn.btn-primary(type="button", name="do", onclick="doYourThing();") Submit
+
+        include includes/footer.pug
+
+        include includes/scripts.pug
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js")
+        script(src='js/athing.js')
