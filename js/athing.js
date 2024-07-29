@@ -41,4 +41,7 @@ function doYourThing()
     var pos = parseInt(myrng() * adjetives.length);
 
     alert(pos);
+
+    //Some change random, remove
+    var pos = "cosa";
 }
