@@ -26,8 +26,9 @@ html(lang='en')
                 div.form-group
                     input#name.form-control(type='text', placeholder='name' name='inputName')
                 div.form-group
-                    input#email.form-control(type='password', placeholder='' name='result')
-                button.btn.btn-primary(type="button", name="do", onclick="doYourThing();") Submit
+                    input#email.form-control(type='text', placeholder='' name='result')
+                button.btn.btn-primary(type="button", name="buttonDO", onclick="doYourThing();") Submit
+                button.btn.btn-secondary(type="button", name="clipCop", onclick="toClipBoard();") Copy
 
         include includes/footer.pug
 
