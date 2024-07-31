@@ -122,3 +122,48 @@ var verbs = [
     // "translate", "trim", "type", "understand", "undress", "unlock", "video", "vote", "wait", "walk", "want", "wash",
     // "watch", "wave", "weaken", "welcome", "whisper", "widen", "wish", "wonder", "work", "worship", "write", "yell"
 ];
+
+
+function cryptArray()
+{
+    var inputMasterValue = document.getElementsByName("inputMaster")[0].value;
+    var workArray = verbs.map(v => CryptoJS.AES.encrypt(v, inputMasterValue));
+
+    document.getElementsByName("result")[0].value = "\"" + workArray.join("\", \"") + "\"";
+}
+
+doOtherThing.pug
+
+doctype html
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+        meta(name='description', content='Clever Nimbus Landing Page')
+        meta(name='author', content='CleverNimbus')
+
+        title CleverNimbus main site
+
+        // Favicon
+        link(rel='icon', type='image/x-icon', href='assets/favicon.ico')
+
+        include includes/css.pug
+    body
+        include includes/navbar.pug
+
+        #wrapper.d-flex
+            include includes/sidebar.pug
+
+            // Page content wrapper
+            #page-content-wrapper
+                form(role='form')
+                div.form-group
+                    input#name.form-control(type='text', placeholder='master' name='inputMaster')
+                div.form-group
+                    input#email.form-control(type='text', placeholder='' name='result')
+                button.btn.btn-primary(type="button", name="buttonDO", onclick="cryptArray();") Submit
+
+        include includes/footer.pug
+
+        include includes/scripts.pug
+        script(src='js/athing.js')
