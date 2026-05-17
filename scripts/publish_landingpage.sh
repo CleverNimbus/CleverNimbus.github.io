@@ -13,7 +13,7 @@ FLUTTER_BIN="${FLUTTER_BIN:-flutter}"
 SOURCE_DIR=""
 COPY_TARGET_DIR=""
 BASE_HREF=""
-USE_HTML_RENDERER="false"
+USE_WASM="false"
 
 usage() {
 	echo "Usage: $0 [commit_message]"
@@ -69,19 +69,19 @@ configure_mode() {
 		SOURCE_DIR="/home/sefe/sources/CleverNimbus.github.io/main/clever_landing_page"
 		COPY_TARGET_DIR="$ROOT_TARGET_DIR"
 		BASE_HREF="/"
-		USE_HTML_RENDERER="true"
+		USE_WASM="true"
 		;;
 	N)
 		SOURCE_DIR="/home/sefe/sources/NoiseLabyrinth/noiselabyrinth_gui"
 		COPY_TARGET_DIR="$ROOT_TARGET_DIR/app_noiselabyrinth"
 		BASE_HREF="/app_noiselabyrinth/"
-		USE_HTML_RENDERER="false"
+		USE_WASM="false"
 		;;
 	G)
 		SOURCE_DIR="/home/sefe/sources/Get-The-Future-You-Want/gtfyw_internal_debugger"
 		COPY_TARGET_DIR="$ROOT_TARGET_DIR/app_gtfyw_internal"
 		BASE_HREF="/app_gtfyw_internal/"
-		USE_HTML_RENDERER="false"
+		USE_WASM="false"
 		;;
 	*)
 		usage
@@ -135,8 +135,9 @@ build_release() {
 		--base-href "$BASE_HREF"
 	)
 
-	if [[ "$USE_HTML_RENDERER" == "true" ]]; then
-		echo "Note: Flutter 3.41.9 no longer supports '--web-renderer html' for 'flutter build web'."
+	if [[ "$USE_WASM" == "true" ]]; then
+		echo "Note: Enabling WebAssembly build (--wasm), which uses skwasm with JavaScript fallback."
+		build_cmd+=(--wasm)
 	fi
 
 	(
@@ -196,7 +197,7 @@ compact_and_push() {
 	fi
 
 	git -C "$ROOT_TARGET_DIR" branch -m "$TARGET_BRANCH"
-	git -C "$ROOT_TARGET_DIR" push -f origin "$TARGET_BRANCH"
+	git -C "$ROOT_TARGET_DIR" push -f --set-upstream origin "$TARGET_BRANCH"
 }
 
 select_mode_interactive
