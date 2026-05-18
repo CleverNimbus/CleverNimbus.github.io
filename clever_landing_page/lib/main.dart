@@ -47,15 +47,24 @@ class _LandingPageState extends State<LandingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          _Header(
-            selected: _selected,
-            onSelect: (s) => setState(() => _selected = s),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/main_back.png'),
+            fit: BoxFit.cover,
+            opacity: 0.4,
           ),
-          Expanded(child: _panels[_selected]!),
-          const _Footer(),
-        ],
+        ),
+        child: Column(
+          children: [
+            _Header(
+              selected: _selected,
+              onSelect: (s) => setState(() => _selected = s),
+            ),
+            Expanded(child: _panels[_selected]!),
+            const _Footer(),
+          ],
+        ),
       ),
     );
   }
@@ -143,7 +152,7 @@ class _Footer extends StatelessWidget {
       color: const Color(0xFF111113),
       alignment: Alignment.center,
       child: Text(
-        'Clevernimbus',
+        'Clevernimbus 2026',
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
           color: Colors.white38,
           letterSpacing: 1.1,

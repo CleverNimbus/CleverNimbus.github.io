@@ -7,13 +7,13 @@ TARGET_BRANCH="gh-pages"
 ORPHAN_BRANCH="clean"
 DEPLOY_MODE=""
 COMMIT_MESSAGE="${1:-Fresh deployment}"
-REQUIRED_FLUTTER_VERSION="3.41.9"
 FLUTTER_BIN="${FLUTTER_BIN:-flutter}"
 
 SOURCE_DIR=""
 COPY_TARGET_DIR=""
 BASE_HREF=""
 USE_WASM="false"
+DEPLOY_COMMIT_FILE=".deploy_commit"
 
 usage() {
 	echo "Usage: $0 [commit_message]"
@@ -21,6 +21,7 @@ usage() {
 	echo "  L: Deploy clever_landing_page to gh-pages root"
 	echo "  N: Deploy noiselabyrinth_gui to app_noiselabyrinth"
 	echo "  G: Deploy gtfyw_internal_debugger to app_gtfyw_internal"
+	echo "  A: Deploy adhd_tools to app_adhd_tools"
 }
 
 select_mode_interactive() {
@@ -30,37 +31,22 @@ select_mode_interactive() {
 	echo "  [L] clever_landing_page -> gh-pages root"
 	echo "  [N] noiselabyrinth_gui -> app_noiselabyrinth"
 	echo "  [G] gtfyw_internal_debugger -> app_gtfyw_internal"
+	echo "  [A] adhd_tools -> app_adhd_tools"
 
 	while true; do
-		read -r -p "Enter option (L/N/G): " selected_mode
+		read -r -p "Enter option (L/N/G/A): " selected_mode
 		selected_mode="${selected_mode^^}"
 
 		case "$selected_mode" in
-		L|N|G)
+		L|N|G|A)
 			DEPLOY_MODE="$selected_mode"
 			break
 			;;
 		*)
-			echo "Invalid option: '$selected_mode'. Please enter L, N, or G."
+			echo "Invalid option: '$selected_mode'. Please enter L, N, G, or A."
 			;;
 		esac
 	done
-}
-
-ensure_flutter_version() {
-	local installed_version
-	installed_version="$("$FLUTTER_BIN" --version 2>/dev/null | head -n 1 | awk '{print $2}')"
-
-	if [[ -z "$installed_version" ]]; then
-		echo "Unable to detect Flutter version using '$FLUTTER_BIN'."
-		exit 1
-	fi
-
-	if [[ "$installed_version" != "$REQUIRED_FLUTTER_VERSION" ]]; then
-		echo "This script requires Flutter $REQUIRED_FLUTTER_VERSION, but found $installed_version."
-		echo "Set FLUTTER_BIN to a Flutter 3.41.9 binary, for example via FVM."
-		exit 1
-	fi
 }
 
 configure_mode() {
@@ -75,13 +61,19 @@ configure_mode() {
 		SOURCE_DIR="/home/sefe/sources/NoiseLabyrinth/noiselabyrinth_gui"
 		COPY_TARGET_DIR="$ROOT_TARGET_DIR/app_noiselabyrinth"
 		BASE_HREF="/app_noiselabyrinth/"
-		USE_WASM="false"
+		USE_WASM="true"
 		;;
 	G)
 		SOURCE_DIR="/home/sefe/sources/Get-The-Future-You-Want/gtfyw_internal_debugger"
 		COPY_TARGET_DIR="$ROOT_TARGET_DIR/app_gtfyw_internal"
 		BASE_HREF="/app_gtfyw_internal/"
-		USE_WASM="false"
+		USE_WASM="true"
+		;;
+	A)
+		SOURCE_DIR="/home/sefe/sources/selfADHD_tools/self_adhd_tools/"
+		COPY_TARGET_DIR="$ROOT_TARGET_DIR/app_adhd_tools"
+		BASE_HREF="/app_adhd_tools/"
+		USE_WASM="true"
 		;;
 	*)
 		usage
@@ -124,6 +116,35 @@ ensure_dirs() {
 	fi
 
 	echo "Directories verified: $ROOT_TARGET_DIR and $COPY_TARGET_DIR"
+}
+
+check_already_deployed() {
+	local commit_file="$COPY_TARGET_DIR/$DEPLOY_COMMIT_FILE"
+
+	if [[ ! -f "$commit_file" ]]; then
+		echo "No previous deploy commit found. Proceeding with deployment."
+		return
+	fi
+
+	local current_commit
+	current_commit=$(git -C "$SOURCE_DIR" rev-parse HEAD)
+
+	local deployed_commit
+	deployed_commit=$(cat "$commit_file")
+
+	if [[ "$current_commit" == "$deployed_commit" ]]; then
+		echo "Commit '$current_commit' is already deployed to '$COPY_TARGET_DIR'. Aborting."
+		exit 0
+	fi
+
+	echo "New commit detected: '$current_commit' (previously deployed: '$deployed_commit'). Proceeding."
+}
+
+save_deploy_commit() {
+	local current_commit
+	current_commit=$(git -C "$SOURCE_DIR" rev-parse HEAD)
+	echo "$current_commit" > "$COPY_TARGET_DIR/$DEPLOY_COMMIT_FILE"
+	echo "Saved deploy commit '$current_commit' to '$COPY_TARGET_DIR/$DEPLOY_COMMIT_FILE'."
 }
 
 build_release() {
@@ -202,11 +223,12 @@ compact_and_push() {
 
 select_mode_interactive
 configure_mode
-ensure_flutter_version
 ensure_dirs
+check_already_deployed
 build_release
 clean_gh_pages_root
 sync_build_output
+save_deploy_commit
 compact_and_push
 
 echo "Done. Mode '$DEPLOY_MODE' deployed and force-pushed to '$TARGET_BRANCH'."

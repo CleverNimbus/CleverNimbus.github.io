@@ -43,7 +43,7 @@ class ProjectsPanel extends StatelessWidget {
                 child: _ProjectCard(
                   title: 'Noise Labyrinth',
                   description:
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In efficitur erat vitae erat gravida, et faucibus urna mollis. Donec suscipit nibh in lorem sollicitudin, in posuere dui iaculis.',
+                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque viverra, nibh ac volutpat dapibus, sem justo aliquet nibh, non vulputate augue justo sit amet nisl.',
                   buttonLabel: 'Open Noise Labyrinth',
                   backgroundAssetPath: 'assets/music-waves.jpg',
                   backgroundOpacity: 0.43,
@@ -57,6 +57,27 @@ class ProjectsPanel extends StatelessWidget {
                     colors: [Color(0xC7202024), Color(0xDE202024)],
                   ),
                   onPressed: () => _openPath('/app_noiselabyrinth/'),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: _ProjectCard(
+                  title: 'ADHD Tools',
+                  description:
+                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque viverra, nibh ac volutpat dapibus, sem justo aliquet nibh, non vulputate augue justo sit amet nisl.',
+                  buttonLabel: 'Open ADHD Tools',
+                  backgroundAssetPath: 'assets/ADHD.jpg',
+                  backgroundOpacity: 0.43,
+                  imageColorFilter: const ColorFilter.mode(
+                    Color(0x8F88AA88),
+                    BlendMode.srcATop,
+                  ),
+                  overlayGradient: const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Color(0xC7202024), Color(0xDE202024)],
+                  ),
+                  onPressed: () => _openPath('/app_adhd_tools/'),
                 ),
               ),
             ],
@@ -114,7 +135,10 @@ class _ProjectCard extends StatelessWidget {
                   ? Image.asset(backgroundAssetPath, fit: BoxFit.cover)
                   : ColorFiltered(
                       colorFilter: imageColorFilter!,
-                      child: Image.asset(backgroundAssetPath, fit: BoxFit.cover),
+                      child: Image.asset(
+                        backgroundAssetPath,
+                        fit: BoxFit.cover,
+                      ),
                     ),
             ),
             Container(decoration: BoxDecoration(gradient: overlayGradient)),
